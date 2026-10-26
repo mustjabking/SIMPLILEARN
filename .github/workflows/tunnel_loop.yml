@@ -1,48 +1,26 @@
-name: Continuous Lyra Tunnel Engine
+name: Continuous Lyra Deploy Engine
 
 on:
   push:
     branches: [ "main" ]
-  schedule:
-    - cron: '0 */2 * * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  run-tunnel:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '18'
 
-      - name: Start Python Local HTTP Server
-        run: |
-          python3 -m http.server 3000 &
-          sleep 2
+      - name: Install Surge CLI
+        run: npm install -g surge
 
-      - name: Launch Pinggy Tunnel for lyra
+      - name: Deploy Direct HTML to lyra.surge.sh
         run: |
-          echo "Starting Pinggy Tunnel..."
-          # Pinggy ke correct domain a.pinggy.io ke zariye custom subdomain lyra set karein
-          ssh -o StrictHostKeyChecking=no -p 80 -R lyra:80:localhost:3000 a.pinggy.io &
-          sleep 6
-          echo "Tunnel active on https://lyra.a.pinggy.online !"
-
-      - name: Keep Runner Active for 2 Hours
-        run: |
-          sleep 7200
-
-      - name: Trigger Auto-Restart Loop via Commit
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          date +%s > dummy.txt
-          
-          git add dummy.txt
-          git commit -m "Auto-refreshing continuous tunnel session after 2 hours [skip ci]" || true
-          git push origin main
+          # Publish direct to custom subdomain without token prompts
+          surge --project . --domain lyra.surge.sh
