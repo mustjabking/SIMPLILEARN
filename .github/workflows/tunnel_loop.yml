@@ -1,26 +1,67 @@
-name: Continuous Lyra Deploy Engine
+name: Continuous Lyra Tunnel Engine
 
 on:
   push:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  deploy:
+  run-tunnel:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Surge CLI
-        run: npm install -g surge
-
-      - name: Deploy Direct HTML to lyra.surge.sh
+      - name: Download & Install Cloudflare Tunnel CLI
         run: |
-          # Publish direct to custom subdomain without token prompts
-          surge --project . --domain lyra.surge.sh
+          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared-linux-amd64.deb
+
+      - name: Start Python Local HTTP Server
+        run: |
+          python3 -m http.server 3000 &
+          sleep 2
+
+      - name: Launch Cloudflare Tunnel & Create Custom Short Link
+        run: |
+          echo "Starting Cloudflare Quick Tunnel..."
+          cloudflared tunnel --url http://localhost:3000 > cloudflare.log 2>&1 &
+          sleep 10
+          
+          # Full Cloudflare URL fetch karein
+          FULL_URL=$(grep -o 'https://[-a-zA-Z0-9]*\.trycloudflare\.com' cloudflare.log | head -n 1)
+          echo "Full URL: $FULL_URL"
+          
+          # Custom shorturl 'lyra' ke sath request karein
+          SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=$FULL_URL&shorturl=lyra")
+          
+          # Agar 'lyra' word busy ho toh random timestamp suffix ke sath generate karein
+          if [[ "$SHORT_URL" == *"Error"* ]]; then
+             SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=$FULL_URL&shorturl=lyra$(date +%s | tail -c 4)")
+          fi
+          
+          echo "=========================================="
+          echo "YOUR CUSTOM SHORT LINK: $SHORT_URL"
+          echo "=========================================="
+
+      - name: Keep Runner Active for 2 Hours
+        run: |
+          sleep 7200
+
+      - name: Trigger Auto-Restart Loop via Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          date +%s > dummy.txt
+          
+          git add dummy.txt
+          git commit -m "Auto-refreshing continuous tunnel session after 2 hours [skip ci]" || true
+          git push origin main
