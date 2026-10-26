@@ -25,17 +25,28 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Install Localtunnel Package
+        run: npm install localtunnel
+
       - name: Start Python Local HTTP Server
         run: |
           python3 -m http.server 3000 &
           sleep 2
 
-      - name: Launch Localtunnel for lyra.loca.lt
+      - name: Launch Localtunnel with Bypass for lyra.loca.lt
         run: |
-          echo "Starting Localtunnel on port 3000..."
-          npx localtunnel --port 3000 --subdomain lyra &
-          sleep 5
-          echo "Tunnel initiated at: https://lyra.loca.lt"
+          echo "Starting Localtunnel..."
+          node -e '
+            const localtunnel = require("localtunnel");
+            (async () => {
+              const tunnel = await localtunnel({ port: 3000, subdomain: "lyra" });
+              console.log("TUNNEL_URL: " + tunnel.url);
+              tunnel.on("close", () => {
+                console.log("Tunnel closed");
+              });
+            })();
+          ' &
+          sleep 6
 
       - name: Keep Runner Active for 2 Hours
         run: |
