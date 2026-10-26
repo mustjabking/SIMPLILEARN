@@ -1,9 +1,9 @@
-name: Deploy Only HTML to TiniDrop
+name: Deploy to Surge
 
 on:
   push:
     branches:
-      - main  # Agar aapki branch master hai toh yahan master likhein
+      - main  # Agar aapki branch master hai toh master likhein
 
 jobs:
   deploy:
@@ -18,17 +18,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Deploying with Domain Fallbacks
+      - name: Deploying to Surge
         run: |
-          echo "Trying to deploy on ://tinidrop.com..."
-          if npx tinidrop ./index.html --domain lyra; then
-            echo "Successfully deployed to ://tinidrop.com"
-          else
-            echo "lyra was taken, trying ://tinidrop.com..."
-            if npx tinidrop ./index.html --domain lyraai; then
-              echo "Successfully deployed to ://tinidrop.com"
-            else
-              echo "lyraai was taken, deploying to ://tinidrop.com..."
-              npx tinidrop ./index.html --domain lyramoon
-            fi
-          fi
+          # Surge ko bina token ke temporary guest email ke saath deploy kar rahe hain
+          npx surge ./ --domain lyramoon.surge.sh --token dummy_token_not_needed || npx surge ./ --domain lyraai.surge.sh
