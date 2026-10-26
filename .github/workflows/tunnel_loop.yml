@@ -1,0 +1,55 @@
+name: Continuous Lyra Tunnel Engine
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    # Har 2 hours ke baad automatic fallback trigger
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run-tunnel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Start Python Local HTTP Server
+        run: |
+          python3 -m http.server 3000 &
+          sleep 2
+
+      - name: Launch Localtunnel for lyra.loca.lt
+        run: |
+          echo "Starting Localtunnel on port 3000..."
+          npx localtunnel --port 3000 --subdomain lyra &
+          sleep 5
+          echo "Tunnel initiated at: https://lyra.loca.lt"
+
+      - name: Keep Runner Active for 2 Hours
+        run: |
+          # 2 ghante (7200 seconds) tak runner ko live rakhein
+          sleep 7200
+
+      - name: Trigger Auto-Restart Loop via Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Change tracking file to force a new push and re-trigger workflow
+          date +%s > dummy.txt
+          
+          git add dummy.txt
+          git commit -m "Auto-refreshing continuous tunnel session after 2 hours [skip ci]" || true
+          git push origin main
