@@ -4,7 +4,6 @@ on:
   push:
     branches: [ "main" ]
   schedule:
-    # Har 2 hours ke baad automatic fallback trigger
     - cron: '0 */2 * * *'
   workflow_dispatch:
 
@@ -25,17 +24,16 @@ jobs:
           python3 -m http.server 3000 &
           sleep 2
 
-      - name: Launch Pinggy Tunnel (No Warning Page)
+      - name: Launch Serveo Tunnel for lyra
         run: |
-          echo "Starting Pinggy Tunnel..."
-          # SSH ke zariye pinggy.link tunnel run karein custom subdomain ke sath
-          ssh -o StrictHostKeyChecking=no -R lyra:80:localhost:3000 a.pinggy.link &
-          sleep 5
-          echo "Tunnel active on Pinggy!"
+          echo "Starting Serveo Tunnel..."
+          # Serveo par custom subdomain ke sath SSH tunnel run karein
+          ssh -o StrictHostKeyChecking=no -R lyra:80:localhost:3000 serveo.net &
+          sleep 6
+          echo "Tunnel active on Serveo!"
 
       - name: Keep Runner Active for 2 Hours
         run: |
-          # 2 ghante (7200 seconds) tak runner ko live rakhein
           sleep 7200
 
       - name: Trigger Auto-Restart Loop via Commit
@@ -43,7 +41,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Change tracking file to force a new push and re-trigger workflow
           date +%s > dummy.txt
           
           git add dummy.txt
