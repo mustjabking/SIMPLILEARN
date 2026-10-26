@@ -20,33 +20,18 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install Localtunnel Package
-        run: npm install localtunnel
-
       - name: Start Python Local HTTP Server
         run: |
           python3 -m http.server 3000 &
           sleep 2
 
-      - name: Launch Localtunnel with Bypass for lyra.loca.lt
+      - name: Launch Pinggy Tunnel (No Warning Page)
         run: |
-          echo "Starting Localtunnel..."
-          node -e '
-            const localtunnel = require("localtunnel");
-            (async () => {
-              const tunnel = await localtunnel({ port: 3000, subdomain: "lyra" });
-              console.log("TUNNEL_URL: " + tunnel.url);
-              tunnel.on("close", () => {
-                console.log("Tunnel closed");
-              });
-            })();
-          ' &
-          sleep 6
+          echo "Starting Pinggy Tunnel..."
+          # SSH ke zariye pinggy.link tunnel run karein custom subdomain ke sath
+          ssh -o StrictHostKeyChecking=no -R lyra:80:localhost:3000 a.pinggy.link &
+          sleep 5
+          echo "Tunnel active on Pinggy!"
 
       - name: Keep Runner Active for 2 Hours
         run: |
