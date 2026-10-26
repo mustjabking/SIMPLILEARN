@@ -1,4 +1,4 @@
-name: Deploy Only HTML to Surge
+name: Deploy Only HTML to TiniDrop
 
 on:
   push:
@@ -20,15 +20,15 @@ jobs:
 
       - name: Deploying with Domain Fallbacks
         run: |
-          echo "Trying to deploy on lyra.surge.sh..."
-          if npx surge ./ --domain lyra.surge.sh --token 1234567890abcdef1234567890abcdef; then
-            echo "Successfully deployed to lyra.surge.sh"
+          echo "Trying to deploy on ://tinidrop.com..."
+          if npx tinidrop ./index.html --domain lyra; then
+            echo "Successfully deployed to ://tinidrop.com"
           else
-            echo "lyra was taken, trying lyraai.surge.sh..."
-            if npx surge ./ --domain lyraai.surge.sh --token 1234567890abcdef1234567890abcdef; then
-              echo "Successfully deployed to lyraai.surge.sh"
+            echo "lyra was taken, trying ://tinidrop.com..."
+            if npx tinidrop ./index.html --domain lyraai; then
+              echo "Successfully deployed to ://tinidrop.com"
             else
-              echo "lyraai was taken, deploying to lyramoon.surge.sh..."
-              npx surge ./ --domain lyramoon.surge.sh --token 1234567890abcdef1234567890abcdef
+              echo "lyraai was taken, deploying to ://tinidrop.com..."
+              npx tinidrop ./index.html --domain lyramoon
             fi
           fi
