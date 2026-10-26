@@ -1,9 +1,9 @@
-name: Deploy Only HTML to Hostless
+name: Deploy Only HTML to Surge
 
 on:
   push:
     branches:
-      - main  # Agar aapki branch ka naam master hai, toh yahan master likhein
+      - main  # Agar aapki branch master hai toh yahan master likhein
 
 jobs:
   deploy:
@@ -20,15 +20,15 @@ jobs:
 
       - name: Deploying with Domain Fallbacks
         run: |
-          echo "Trying to deploy on lyra.hostless.site..."
-          if npx hostless ./index.html --name lyra; then
-            echo "Successfully deployed to lyra.hostless.site"
+          echo "Trying to deploy on lyra.surge.sh..."
+          if npx surge ./ --domain lyra.surge.sh --token 1234567890abcdef1234567890abcdef; then
+            echo "Successfully deployed to lyra.surge.sh"
           else
-            echo "lyra was taken, trying lyraai.hostless.site..."
-            if npx hostless ./index.html --name lyraai; then
-              echo "Successfully deployed to lyraai.hostless.site"
+            echo "lyra was taken, trying lyraai.surge.sh..."
+            if npx surge ./ --domain lyraai.surge.sh --token 1234567890abcdef1234567890abcdef; then
+              echo "Successfully deployed to lyraai.surge.sh"
             else
-              echo "lyraai was taken, deploying to lyramoon.hostless.site..."
-              npx hostless ./index.html --name lyramoon
+              echo "lyraai was taken, deploying to lyramoon.surge.sh..."
+              npx surge ./ --domain lyramoon.surge.sh --token 1234567890abcdef1234567890abcdef
             fi
           fi
