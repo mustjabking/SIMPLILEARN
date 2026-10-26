@@ -24,13 +24,13 @@ jobs:
           python3 -m http.server 3000 &
           sleep 2
 
-      - name: Launch Serveo Tunnel for lyra
+      - name: Launch Pinggy Tunnel for lyra
         run: |
-          echo "Starting Serveo Tunnel..."
-          # Serveo par custom subdomain ke sath SSH tunnel run karein
-          ssh -o StrictHostKeyChecking=no -R lyra:80:localhost:3000 serveo.net &
+          echo "Starting Pinggy Tunnel..."
+          # Pinggy ke correct domain a.pinggy.io ke zariye custom subdomain lyra set karein
+          ssh -o StrictHostKeyChecking=no -p 80 -R lyra:80:localhost:3000 a.pinggy.io &
           sleep 6
-          echo "Tunnel active on Serveo!"
+          echo "Tunnel active on https://lyra.a.pinggy.online !"
 
       - name: Keep Runner Active for 2 Hours
         run: |
