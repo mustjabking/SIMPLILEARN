@@ -1,67 +1,142 @@
-name: Continuous Lyra Tunnel Engine
+name: IRIS Deploy (TryCloudflare)
 
 on:
-  push:
-    branches: [ "main" ]
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '0 */5 * * *'      # every 5 hours
   workflow_dispatch:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: iris-deploy
+  cancel-in-progress: false    # ← CRITICAL: don't kill the running 5.2h job at the 5h cron mark
 
 permissions:
   contents: write
 
 jobs:
-  run-tunnel:
+  deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 330       # 5.5 h (5.2 h runtime + 18 min buffer)
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Download & Install Cloudflare Tunnel CLI
-        run: |
-          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-          sudo dpkg -i cloudflared-linux-amd64.deb
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Start Python Local HTTP Server
-        run: |
-          python3 -m http.server 3000 &
-          sleep 2
+      - name: Install Python deps
+        run: pip install -r requirements.txt
 
-      - name: Launch Cloudflare Tunnel & Create Custom Short Link
+      - name: Install cloudflared
         run: |
-          echo "Starting Cloudflare Quick Tunnel..."
-          cloudflared tunnel --url http://localhost:3000 > cloudflare.log 2>&1 &
-          sleep 10
-          
-          # Full Cloudflare URL fetch karein
-          FULL_URL=$(grep -o 'https://[-a-zA-Z0-9]*\.trycloudflare\.com' cloudflare.log | head -n 1)
-          echo "Full URL: $FULL_URL"
-          
-          # Custom shorturl 'lyra' ke sath request karein
-          SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=$FULL_URL&shorturl=lyra")
-          
-          # Agar 'lyra' word busy ho toh random timestamp suffix ke sath generate karein
-          if [[ "$SHORT_URL" == *"Error"* ]]; then
-             SHORT_URL=$(curl -s "https://is.gd/create.php?format=simple&url=$FULL_URL&shorturl=lyra$(date +%s | tail -c 4)")
+          curl -fsSL -o /tmp/cloudflared \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x /tmp/cloudflared
+          sudo mv /tmp/cloudflared /usr/local/bin/cloudflared
+          cloudflared --version
+
+      - name: Start Flask + TryCloudflare tunnel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          GIT_BRANCH: ${{ github.ref_name }}
+        run: |
+          nohup python app.py > server.log 2>&1 &
+          sleep 4
+          curl -fsS http://localhost:5000/ >/dev/null || (echo "Server failed"; cat server.log; exit 1)
+          echo "✅ Flask server running on :5000"
+
+          nohup cloudflared tunnel --url http://localhost:5000 --no-autoupdate > tunnel.log 2>&1 &
+          echo "⏳ Waiting for trycloudflare URL..."
+
+          URL=""
+          for i in $(seq 1 30); do
+            URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' tunnel.log | head -1 || true)
+            [ -n "$URL" ] && break
+            sleep 2
+          done
+
+          if [ -z "$URL" ]; then
+            echo "❌ No tunnel URL found"
+            cat tunnel.log
+            exit 1
           fi
-          
-          echo "=========================================="
-          echo "YOUR CUSTOM SHORT LINK: $SHORT_URL"
-          echo "=========================================="
 
-      - name: Keep Runner Active for 2 Hours
-        run: |
-          sleep 7200
+          echo "🌐 Live URL: $URL"
+          echo "TUNNEL_URL=$URL" >> "$GITHUB_ENV"
+          python update_readme.py "$URL"
 
-      - name: Trigger Auto-Restart Loop via Commit
+      - name: Commit README with new URL
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          date +%s > dummy.txt
-          
+          git config user.name  "iris-bot"
+          git config user.email "iris-bot@users.noreply.github.com"
+          git add README.md
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: update IRIS live URL [skip ci]"
+            git pull --rebase origin "$GIT_BRANCH" || true
+            git push origin "HEAD:$GIT_BRANCH" || true
+          else
+            echo "README unchanged (same URL)."
+          fi
+
+      - name: Upload logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-logs
+          path: |
+            server.log
+            tunnel.log
+          if-no-files-found: ignore
+
+      # ─────────────────────────────────────────────────────────────
+      #  5.2 h keep-alive  +  dummy.txt heartbeat at the 5-h mark
+      # ─────────────────────────────────────────────────────────────
+      - name: Run IRIS for 5.2h · update dummy.txt at 5h mark
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
+        run: |
+          echo "🌈 IRIS LIVE: $TUNNEL_URL"
+          echo "   Created by MUHAMMAD TAQI"
+          echo ""
+
+          echo "⏳ Step 1/3 — sleeping 5 hours (18000s)… tunnel is fully live."
+          sleep 18000
+
+          echo ""
+          echo "📝 Step 2/3 — 5h reached → updating dummy.txt heartbeat."
+          {
+            echo "IRIS heartbeat"
+            echo "timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "run:       ${{ github.run_number }}"
+            echo "url:       $TUNNEL_URL"
+          } > dummy.txt
+
+          git config user.name  "iris-bot"
+          git config user.email "iris-bot@users.noreply.github.com"
           git add dummy.txt
-          git commit -m "Auto-refreshing continuous tunnel session after 2 hours [skip ci]" || true
-          git push origin main
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(dummy): heartbeat after 5h [skip ci]"
+            git pull --rebase origin "$GIT_BRANCH" || true
+            git push origin "HEAD:$GIT_BRANCH" || true
+            echo "✅ dummy.txt committed & pushed."
+          else
+            echo "dummy.txt unchanged (content identical)."
+          fi
+
+          echo ""
+          echo "🌐 Step 3/3 — keeping tunnel alive 12 more minutes (720s) → 5.2h total."
+          sleep 720
+
+          echo "✅ Run finished after 5.2 hours — tunnel will shut down now."
+
+      - name: Done
+        run: echo "IRIS has completed its 5.2-hour window. Next run via cron."
