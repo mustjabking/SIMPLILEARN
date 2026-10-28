@@ -3,14 +3,68 @@
   "created_by": "MUHAMMAD TAQI",
   "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmr0hV3s2HmcHs4061jVxiWxtde4ZkU6WIPJZxFfbfBg&s=10",
   "items": [
-    { "id": "web-builder",   "name": "WEB BUILDER",         "description": "Build websites easily",                              "url": "https://muhammadtaqi512q-oss.github.io/M-BOX/v2", "likes": 0 },
-    { "id": "ai-builder",    "name": "AI BUILDER",          "description": "Create your own AI chatbot same like ChatGPT",        "url": "https://builder.oneapp.dev",                      "likes": 0 },
-    { "id": "game-builder",  "name": "GAME BUILDER",        "description": "Build your own games",                                "url": "https://lyra-gb.oneapp.dev",                      "likes": 0 },
-    { "id": "cloud",         "name": "CLOUD",               "description": "Cloud storage & tools",                               "url": "https://clouds.oneapp.dev",                       "likes": 0 },
-    { "id": "image-gen",     "name": "IMAGE GENERATOR AI",  "description": "Generate images using AI",                            "url": "https://image-ai.oneapp.dev/",                    "likes": 0 },
-    { "id": "chatbot",       "name": "CHATBOT AI",          "description": "Chat with an AI assistant",                           "url": "https://ai-studio.oneapp.dev/lyra.html",          "likes": 0 },
-    { "id": "video-gen",     "name": "VIDEO GENERATOR AI",  "description": "Generate AI videos",                                  "url": "https://slora-ai.ai.studio/",                     "likes": 0 },
-    { "id": "lyra",          "name": "LYRA AI",             "description": "Advanced AI assistant",                               "url": "https://lyrapro.oneapp.dev/",                     "likes": 0 },
-    { "id": "novas",         "name": "NOVAS",               "description": "Next-gen AI tools",                                   "url": "https://novas.oneapp.dev",                        "likes": 0 }
+    {
+      "id": "web-builder",
+      "name": "WEB BUILDER",
+      "description": "Build websites easily",
+      "url": "https://muhammadtaqi512q-oss.github.io/M-BOX/v2",
+      "likes": 1
+    },
+    {
+      "id": "ai-builder",
+      "name": "AI BUILDER",
+      "description": "Create your own AI chatbot same like ChatGPT",
+      "url": "https://builder.oneapp.dev",
+      "likes": 0
+    },
+    {
+      "id": "game-builder",
+      "name": "GAME BUILDER",
+      "description": "Build your own games",
+      "url": "https://lyra-gb.oneapp.dev",
+      "likes": 0
+    },
+    {
+      "id": "cloud",
+      "name": "CLOUD",
+      "description": "Cloud storage & tools",
+      "url": "https://clouds.oneapp.dev",
+      "likes": 0
+    },
+    {
+      "id": "image-gen",
+      "name": "IMAGE GENERATOR AI",
+      "description": "Generate images using AI",
+      "url": "https://image-ai.oneapp.dev/",
+      "likes": 0
+    },
+    {
+      "id": "chatbot",
+      "name": "CHATBOT AI",
+      "description": "Chat with an AI assistant",
+      "url": "https://ai-studio.oneapp.dev/lyra.html",
+      "likes": 0
+    },
+    {
+      "id": "video-gen",
+      "name": "VIDEO GENERATOR AI",
+      "description": "Generate AI videos",
+      "url": "https://slora-ai.ai.studio/",
+      "likes": 0
+    },
+    {
+      "id": "lyra",
+      "name": "LYRA AI",
+      "description": "Advanced AI assistant",
+      "url": "https://lyrapro.oneapp.dev/",
+      "likes": 0
+    },
+    {
+      "id": "novas",
+      "name": "NOVAS",
+      "description": "Next-gen AI tools",
+      "url": "https://novas.oneapp.dev",
+      "likes": 0
+    }
   ]
 }
