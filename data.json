@@ -65,6 +65,13 @@
       "description": "Next-gen AI tools",
       "url": "https://novas.oneapp.dev",
       "likes": 77
+    },
+    {
+      "id": "ltx",
+      "name": "LTX",
+      "description": "GENERATE AI VIDEOS",
+      "url": "https://lightricks-ltx-2-3.hf.space/",
+      "likes": 77
     }
   ]
 }
