@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://deviant-spyware-valve-mustang.trycloudflare.com`
+> **Current live URL:** `https://cuts-hunter-cricket-sentence.trycloudflare.com`
