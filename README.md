@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://boats-tackle-society-regularly.trycloudflare.com`
+> **Current live URL:** `https://festival-place-metabolism-present.trycloudflare.com`
