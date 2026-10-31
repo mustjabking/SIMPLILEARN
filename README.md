@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://oct-meditation-durham-closed.trycloudflare.com`
+> **Current live URL:** `https://confidence-novelty-reed-pichunter.trycloudflare.com`
