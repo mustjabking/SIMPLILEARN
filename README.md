@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://reservation-bool-processing-democracy.trycloudflare.com`
+> **Current live URL:** `https://captain-johnston-statistical-communication.trycloudflare.com`
