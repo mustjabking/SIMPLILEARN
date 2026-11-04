@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://gathered-lung-initially-together.trycloudflare.com`
+> **Current live URL:** `https://impose-sculpture-shannon-lions.trycloudflare.com`
