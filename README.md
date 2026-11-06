@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://kit-subject-pie-mice.trycloudflare.com`
+> **Current live URL:** `https://shopzilla-quit-plate-proprietary.trycloudflare.com`
