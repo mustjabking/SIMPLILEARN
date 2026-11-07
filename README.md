@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://wrap-earn-capable-renaissance.trycloudflare.com`
+> **Current live URL:** `https://command-interesting-forget-models.trycloudflare.com`
