@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://resumes-himself-sleep-chuck.trycloudflare.com`
+> **Current live URL:** `https://clock-keyword-volt-waiting.trycloudflare.com`
