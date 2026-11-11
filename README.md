@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://conceptual-parental-jesus-message.trycloudflare.com`
+> **Current live URL:** `https://tons-est-watched-capacity.trycloudflare.com`
