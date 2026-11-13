@@ -7,4 +7,4 @@ The most-liked software automatically rises to the **top** of the list.
 
 ## 🚀 Live URL (TryCloudflare)
 
-> **Current live URL:** `https://executives-buyers-florida-invitations.trycloudflare.com`
+> **Current live URL:** `https://defined-commons-guam-cargo.trycloudflare.com`
